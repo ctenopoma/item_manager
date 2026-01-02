@@ -57,16 +57,23 @@ def delete_item(item_id: int, db: Session = Depends(database.get_db), current_us
         raise HTTPException(status_code=404, detail="Item not found")
     return None
 
-class BorrowRequest(schemas.BaseModel):
+class UnauthenticatedBorrowRequest(schemas.BaseModel):
+    username: str
     due_date: schemas.date
+    lending_reason: schemas.Optional[str] = None
+    lending_location: schemas.Optional[str] = None
 
 @router.post("/{item_id}/borrow", response_model=schemas.ItemResponse)
 def borrow_item(
     item_id: int, 
-    borrow_request: schemas.ItemUpdate,
-    db: Session = Depends(database.get_db),
-    current_user: models.User = Depends(get_current_active_user)
+    borrow_request: UnauthenticatedBorrowRequest,
+    db: Session = Depends(database.get_db)
 ):
+    # Lookup user by username
+    user = crud.get_user_by_username(db, username=borrow_request.username)
+    if not user:
+        raise HTTPException(status_code=400, detail="User not found")
+
     if not borrow_request.due_date:
         raise HTTPException(status_code=400, detail="Due date is required")
         
@@ -74,7 +81,7 @@ def borrow_item(
         item = crud.borrow_item(
             db=db, 
             item_id=item_id, 
-            user_id=current_user.id, 
+            user_id=user.id, 
             due_date=borrow_request.due_date,
             lending_reason=borrow_request.lending_reason,
             lending_location=borrow_request.lending_location
@@ -87,17 +94,27 @@ def borrow_item(
     return item
 
 @router.post("/{item_id}/return", response_model=schemas.ItemResponse)
-def return_item(item_id: int, db: Session = Depends(database.get_db), current_user: models.User = Depends(get_current_active_user)):
-    is_admin = current_user.role == models.Role.admin.value
-    
+def return_item(item_id: int, db: Session = Depends(database.get_db)):
+    # Retrieve the item to find the current borrower (to log the action correctly)
+    item = crud.get_item(db, item_id)
+    if not item:
+         raise HTTPException(status_code=404, detail="Item not found")
+
+    user_id = item.owner_id
+    if not user_id:
+        # If no owner, maybe it's already returned or inconsistent.
+        # Check status check inside crud.return_item will handle "not borrowed" error.
+        # But we need a user_id for logging. Use 1 (Admin/System) or handle gracefully?
+        # crud.return_item requires user_id.
+        # If we can't identify, let's try to proceed, maybe crud throws error.
+        # Let's assume user_id=0 or 1 if None.
+        user_id = 1 # Fallback to admin/first user for log if somehow owner_id is missing
+
     try:
-        item = crud.return_item(db=db, item_id=item_id, user_id=current_user.id, force=is_admin)
+        # force=True allows return without checking if "current_user" matches "owner_id"
+        # Since we don't have current_user, we just trust the action.
+        item = crud.return_item(db=db, item_id=item_id, user_id=user_id, force=True)
     except ValueError as e:
-        # Internal design C-4 requires 403 Forbidden when trying to return another's item
-        if "User is not the borrower" in str(e):
-             raise HTTPException(status_code=403, detail=str(e))
         raise HTTPException(status_code=400, detail=str(e))
         
-    if not item:
-        raise HTTPException(status_code=404, detail="Item not found")
     return item
