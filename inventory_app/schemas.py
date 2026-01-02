@@ -41,12 +41,16 @@ class ItemUpdate(BaseModel):
     status: Optional[str] = None
     due_date: Optional[date] = None
     owner_id: Optional[int] = None
+    lending_reason: Optional[str] = None
+    lending_location: Optional[str] = None
 
 class ItemResponse(ItemBase):
     id: int
     status: str
     owner_id: Optional[int] = None
     due_date: Optional[date] = None
+    lending_reason: Optional[str] = None
+    lending_location: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -60,3 +64,5 @@ class GrowiItem(BaseModel):
     is_overdue: bool
     is_fixed_asset: bool = False
     accessories: List[str] = []
+    lending_reason: Optional[str] = None
+    lending_location: Optional[str] = None

@@ -7,7 +7,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Equipment List</title>
+    <title>Fixed Assets List</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -63,7 +63,7 @@
 
 <body>
     <div id="container">
-        <div class="loading">Loading data...</div>
+        <div class="loading">Loading fixed assets...</div>
     </div>
 
     <script>
@@ -75,11 +75,14 @@
                 const response = await fetch(API_URL);
                 if (!response.ok) throw new Error('Status ' + response.status);
 
-                const data = await response.json();
-                if (!Array.isArray(data)) throw new Error('Invalid data format');
+                const allData = await response.json();
+                if (!Array.isArray(allData)) throw new Error('Invalid data format');
+
+                // Filter for fixed assets only
+                const data = allData.filter(item => item.is_fixed_asset);
 
                 if (data.length === 0) {
-                    container.innerHTML = '<p>No items found.</p>';
+                    container.innerHTML = '<p>No fixed assets found.</p>';
                     return;
                 }
 
@@ -88,13 +91,12 @@
                     const isOverdue = item.is_overdue ? 'bg-danger-light' : '';
                     const statusText = item.status === 'borrowed' ? '貸出中' :
                         item.status === 'available' ? '在庫あり' : item.status;
-                    const fixedAssetText = item.is_fixed_asset ? '○' : '-';
                     const accessoriesText = (item.accessories && item.accessories.length > 0) ? item.accessories.join(', ') : '-';
 
                     rows += `<tr class="${isOverdue}">
                         <td>${item.management_code || '-'}</td>
                         <td>${item.name || '-'}</td>
-                        <td style="text-align: center;">${fixedAssetText}</td>
+                        <td style="text-align: center;">○</td>
                         <td>${accessoriesText}</td>
                         <td>${statusText}</td>
                         <td>${item.owner_name || '-'}</td>

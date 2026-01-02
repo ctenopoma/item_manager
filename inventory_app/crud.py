@@ -49,7 +49,7 @@ def delete_item(db: Session, item_id: int):
         return True
     return False
 
-def borrow_item(db: Session, item_id: int, user_id: int, due_date: date):
+def borrow_item(db: Session, item_id: int, user_id: int, due_date: date, lending_reason: str = None, lending_location: str = None):
     # Lock the row? For SQLite it's less critical but good practice.
     # Here we just fetch and check.
     item = db.query(models.Item).filter(models.Item.id == item_id).first()
@@ -62,6 +62,8 @@ def borrow_item(db: Session, item_id: int, user_id: int, due_date: date):
     item.status = models.ItemStatus.borrowed.value
     item.owner_id = user_id
     item.due_date = due_date
+    item.lending_reason = lending_reason
+    item.lending_location = lending_location
     
     log = models.Log(item_id=item_id, user_id=user_id, action=models.LogAction.borrow.value)
     db.add(log)
@@ -84,6 +86,8 @@ def return_item(db: Session, item_id: int, user_id: int, force: bool = False):
     item.status = models.ItemStatus.available.value
     item.owner_id = None
     item.due_date = None
+    item.lending_reason = None
+    item.lending_location = None
     
     log = models.Log(item_id=item_id, user_id=user_id, action=models.LogAction.return_.value)
     db.add(log)

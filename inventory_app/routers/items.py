@@ -35,7 +35,9 @@ def get_items_status(db: Session = Depends(database.get_db)):
             due_date=item.due_date,
             is_overdue=is_overdue,
             is_fixed_asset=item.is_fixed_asset or False,
-            accessories=item.accessories or []
+            accessories=item.accessories or [],
+            lending_reason=item.lending_reason,
+            lending_location=item.lending_location
         ))
     return result
 
@@ -69,7 +71,14 @@ def borrow_item(
         raise HTTPException(status_code=400, detail="Due date is required")
         
     try:
-        item = crud.borrow_item(db=db, item_id=item_id, user_id=current_user.id, due_date=borrow_request.due_date)
+        item = crud.borrow_item(
+            db=db, 
+            item_id=item_id, 
+            user_id=current_user.id, 
+            due_date=borrow_request.due_date,
+            lending_reason=borrow_request.lending_reason,
+            lending_location=borrow_request.lending_location
+        )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
         

@@ -45,6 +45,8 @@ class Item(Base):
     due_date = Column(Date, nullable=True)
     accessories = Column(JSON, default=[])
     is_fixed_asset = Column(Boolean, default=False)
+    lending_reason = Column(String, nullable=True)
+    lending_location = Column(String, nullable=True)
 
     owner = relationship("User", back_populates="items")
     logs = relationship("Log", back_populates="item")

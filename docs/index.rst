@@ -11,6 +11,7 @@ Item Manager ドキュメント
    :caption: Contents:
 
    how_to_add_data
+   api_usage
    build
 
 Indices and tables
