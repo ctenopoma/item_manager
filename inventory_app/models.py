@@ -44,6 +44,7 @@ class Item(Base):
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     due_date = Column(Date, nullable=True)
     accessories = Column(JSON, default=[])
+    is_fixed_asset = Column(Boolean, default=False)
 
     owner = relationship("User", back_populates="items")
     logs = relationship("Log", back_populates="item")

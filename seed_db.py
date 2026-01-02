@@ -23,7 +23,7 @@ user2 = crud.create_user(db, schemas.UserCreate(username="suzuki", password="pas
 db.commit()
 
 # Create Items
-item1 = crud.create_item(db, schemas.ItemCreate(name="MacBook Pro M3", management_code="PC-001", category="PC", accessories=["Charger", "Cable"]))
+item1 = crud.create_item(db, schemas.ItemCreate(name="MacBook Pro M3", management_code="PC-001", category="PC", accessories=["Charger", "Cable"], is_fixed_asset=True))
 item2 = crud.create_item(db, schemas.ItemCreate(name="Windows Test PC", management_code="PC-002", category="PC", accessories=["Mouse"]))
 item3 = crud.create_item(db, schemas.ItemCreate(name="USB-C Monitor", management_code="MON-001", category="Monitor", accessories=["HDMI Cable", "Power Cord"]))
 item4 = crud.create_item(db, schemas.ItemCreate(name="Design Book", management_code="BK-001", category="Book"))

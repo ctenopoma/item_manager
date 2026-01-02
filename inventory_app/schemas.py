@@ -32,6 +32,7 @@ class ItemBase(BaseModel):
     management_code: str
     category: Optional[str] = None
     accessories: List[str] = []
+    is_fixed_asset: bool = False
 
 class ItemCreate(ItemBase):
     pass

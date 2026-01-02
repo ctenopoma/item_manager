@@ -20,6 +20,17 @@ def test_create_item_with_accessories(client, admin_token_headers):
     data = response.json()
     assert data["name"] == "PC_Acc"
     assert data["accessories"] == ["Mouse", "Keyboard"]
+    assert data["is_fixed_asset"] is False
+
+def test_create_item_fixed_asset(client, admin_token_headers):
+    response = client.post(
+        "/api/v1/items/", 
+        json={"name": "Server", "management_code": "SRV-001", "is_fixed_asset": True},
+        headers=admin_token_headers
+    )
+    assert response.status_code == 201
+    data = response.json()
+    assert data["is_fixed_asset"] is True
 
 def test_create_item_user_fail(client, user_token_headers):
     response = client.post(
