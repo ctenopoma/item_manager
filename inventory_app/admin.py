@@ -1,5 +1,5 @@
 from sqladmin import ModelView
-from .models import User, Item, Log
+from .models import User, Item, Log, NotificationSettings, EmailTemplate
 
 class UserAdmin(ModelView, model=User):
     column_list = [User.id, User.username, User.display_name, User.employee_id, User.email, User.department, User.role, User.is_active]
@@ -20,3 +20,12 @@ class LogAdmin(ModelView, model=Log):
     can_create = False
     can_edit = False
     can_delete = False
+
+class NotificationSettingsAdmin(ModelView, model=NotificationSettings):
+    column_list = [NotificationSettings.n_days_before, NotificationSettings.m_days_overdue, NotificationSettings.sender_email]
+    icon = "fa-solid fa-cogs"
+
+class EmailTemplateAdmin(ModelView, model=EmailTemplate):
+    column_list = [EmailTemplate.name, EmailTemplate.subject]
+    icon = "fa-solid fa-envelope"
+

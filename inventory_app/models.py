@@ -62,3 +62,23 @@ class Log(Base):
 
     item = relationship("Item", back_populates="logs")
     user = relationship("User", back_populates="logs")
+
+class NotificationSettings(Base):
+    __tablename__ = "notification_settings"
+
+    id = Column(Integer, primary_key=True, index=True)
+    n_days_before = Column(Integer, default=3)
+    m_days_overdue = Column(Integer, default=7)
+    smtp_server = Column(String, default="smtp.gmail.com")
+    smtp_port = Column(Integer, default=587)
+    smtp_username = Column(String, nullable=True)
+    smtp_password = Column(String, nullable=True)
+    sender_email = Column(String, nullable=True)
+
+class EmailTemplate(Base):
+    __tablename__ = "email_templates"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True) # e.g., 'reminder', 'due_today', 'overdue'
+    subject = Column(String)
+    body = Column(String) # Text with placeholders

@@ -12,6 +12,7 @@ Item Manager ドキュメント
 
    how_to_add_data
    api_usage
+   email_notification
    build
 
 Indices and tables
