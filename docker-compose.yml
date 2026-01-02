@@ -1,0 +1,10 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./inventory_app:/app/inventory_app
+      - ./inventory.db:/app/inventory.db
+    environment:
+      - WATCHFILES_FORCE_POLLING=true
