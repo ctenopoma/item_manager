@@ -14,6 +14,7 @@ Item Manager ドキュメント
    api_usage
    email_notification
    build
+   modules
 
 Indices and tables
 ==================

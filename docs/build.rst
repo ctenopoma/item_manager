@@ -76,6 +76,6 @@ Dockerを使用してアプリケーションをコンテナ化して実行し�
 .. code-block:: bash
 
    cd docs
-   uv run sphinx-build -M html . _build
+   uv run sphinx-build -b html docs docs/_build
 
 ビルドが成功すると、 `docs/_build/html/index.html` が生成されます。

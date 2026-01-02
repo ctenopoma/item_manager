@@ -1,3 +1,9 @@
+"""備品操作用 API ルーター.
+
+このモジュールは、備品のリスト取得、作成、削除、貸出、返却など、
+備品に関連するエンドポイントを処理します.
+"""
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
@@ -12,6 +18,10 @@ router = APIRouter(
 
 @router.get("/status", response_model=List[schemas.GrowiItem])
 def get_items_status(db: Session = Depends(database.get_db)):
+    """Growi 連携用にフォーマットされたすべての備品ステータスを取得します.
+    
+    このエンドポイントは、期限切れステータスと所有者の表示名が計算された備品を返します.
+    """
     # This endpoint logic was moved from routers/growi.py
     items = crud.get_items(db, skip=0, limit=1000)
     result = []
@@ -43,21 +53,30 @@ def get_items_status(db: Session = Depends(database.get_db)):
 
 @router.get("/", response_model=List[schemas.ItemResponse])
 def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db), current_user: models.User = Depends(get_current_active_user)):
+    """備品を取得します.
+    
+    Args:
+        skip (int): スキップする備品数.
+        limit (int): 取得する備品の上限数.
+    """
     items = crud.get_items(db, skip=skip, limit=limit)
     return items
 
 @router.post("/", response_model=schemas.ItemResponse, status_code=201)
 def create_item(item: schemas.ItemCreate, db: Session = Depends(database.get_db), current_user: models.User = Depends(get_current_admin_user)):
+    """新規備品を作成します. 管理者ユーザーのみアクセス可能です."""
     return crud.create_item(db=db, item=item)
 
 @router.delete("/{item_id}", status_code=204)
 def delete_item(item_id: int, db: Session = Depends(database.get_db), current_user: models.User = Depends(get_current_admin_user)):
+    """備品を削除します. 管理者ユーザーのみアクセス可能です."""
     success = crud.delete_item(db=db, item_id=item_id)
     if not success:
         raise HTTPException(status_code=404, detail="Item not found")
     return None
 
 class UnauthenticatedBorrowRequest(schemas.BaseModel):
+    """貸出リクエスト用スキーマ."""
     username: str
     due_date: schemas.date
     lending_reason: schemas.Optional[str] = None
@@ -69,6 +88,10 @@ def borrow_item(
     borrow_request: UnauthenticatedBorrowRequest,
     db: Session = Depends(database.get_db)
 ):
+    """備品を貸し出します.
+    
+    ユーザー名を提供することで、認証なしで貸出を行うことができます.
+    """
     # Lookup user by username
     user = crud.get_user_by_username(db, username=borrow_request.username)
     if not user:
@@ -95,6 +118,7 @@ def borrow_item(
 
 @router.post("/{item_id}/return", response_model=schemas.ItemResponse)
 def return_item(item_id: int, db: Session = Depends(database.get_db)):
+    """借りている備品を返却します."""
     # Retrieve the item to find the current borrower (to log the action correctly)
     item = crud.get_item(db, item_id)
     if not item:
