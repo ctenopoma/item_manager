@@ -33,7 +33,9 @@ def get_items_status(db: Session = Depends(database.get_db)):
             status=item.status,
             owner_name=owner_name,
             due_date=item.due_date,
-            is_overdue=is_overdue
+            is_overdue=is_overdue,
+            is_fixed_asset=item.is_fixed_asset or False,
+            accessories=item.accessories or []
         ))
     return result
 

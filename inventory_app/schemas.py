@@ -58,3 +58,5 @@ class GrowiItem(BaseModel):
     owner_name: Optional[str] = None
     due_date: Optional[date] = None
     is_overdue: bool
+    is_fixed_asset: bool = False
+    accessories: List[str] = []
