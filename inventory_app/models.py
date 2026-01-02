@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Date, DateTime
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Date, DateTime, JSON
 from sqlalchemy.orm import relationship
 from datetime import datetime
 import enum
@@ -43,6 +43,7 @@ class Item(Base):
     status = Column(String, default=ItemStatus.available.value)
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     due_date = Column(Date, nullable=True)
+    accessories = Column(JSON, default=[])
 
     owner = relationship("User", back_populates="items")
     logs = relationship("Log", back_populates="item")

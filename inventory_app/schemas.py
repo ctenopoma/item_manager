@@ -31,6 +31,7 @@ class ItemBase(BaseModel):
     name: str
     management_code: str
     category: Optional[str] = None
+    accessories: List[str] = []
 
 class ItemCreate(ItemBase):
     pass

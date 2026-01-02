@@ -8,6 +8,18 @@ def test_create_item(client, admin_token_headers):
     data = response.json()
     assert data["name"] == "PC1"
     assert data["status"] == "available"
+    assert data["accessories"] == []
+
+def test_create_item_with_accessories(client, admin_token_headers):
+    response = client.post(
+        "/api/v1/items/", 
+        json={"name": "PC_Acc", "management_code": "PC-ACC-001", "category": "PC", "accessories": ["Mouse", "Keyboard"]},
+        headers=admin_token_headers
+    )
+    assert response.status_code == 201
+    data = response.json()
+    assert data["name"] == "PC_Acc"
+    assert data["accessories"] == ["Mouse", "Keyboard"]
 
 def test_create_item_user_fail(client, user_token_headers):
     response = client.post(

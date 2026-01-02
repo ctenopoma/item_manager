@@ -8,7 +8,7 @@ class UserAdmin(ModelView, model=User):
     icon = "fa-solid fa-user"
 
 class ItemAdmin(ModelView, model=Item):
-    column_list = [Item.id, Item.name, Item.management_code, Item.status, Item.owner_id]
+    column_list = [Item.id, Item.name, Item.management_code, Item.status, Item.owner_id, Item.accessories]
     column_searchable_list = [Item.name, Item.management_code]
     column_sortable_list = [Item.id, Item.name, Item.status]
     icon = "fa-solid fa-box"
