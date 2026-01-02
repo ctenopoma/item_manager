@@ -35,7 +35,13 @@ APIサーバーの起動
 
    uv run uvicorn inventory_app.main:app --reload
 
-サーバー起動後、ブラウザで `http://localhost:8000/docs` にアクセスすると、Swagger UI が表示されます。
+デフォルトではポート ``8000`` で起動します。ポート番号を変更する場合（例: 8080）は、 ``--port`` オプションを使用します。
+
+.. code-block:: bash
+
+   uv run uvicorn inventory_app.main:app --reload --port 8080
+
+サーバー起動後、ブラウザで `http://localhost:8000/docs` （ポートを変更した場合はそのポート）にアクセスすると、Swagger UI が表示されます。
 
 Docker環境での実行
 ------------------
