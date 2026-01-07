@@ -76,6 +76,14 @@ item_manager/
 
 詳細は起動後の `/docs` でSwagger UIを参照してください。
 
+## web画面公開
+
+- growi_table.html
+![alt text](./fig/image.png)
+
+- growi_fixed_assets_table.html
+![alt text](./fig/image2.png)
+
 ## 🧪 テスト
 
 ```bash

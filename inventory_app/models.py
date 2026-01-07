@@ -57,6 +57,12 @@ class User(Base):
     items = relationship("Item", back_populates="owner")
     logs = relationship("Log", back_populates="user")
 
+    def __str__(self):
+        """sqladminでの表示用に表示名とユーザー名を返す."""
+        if self.display_name:
+            return f"{self.display_name} ({self.username})"
+        return self.username
+
 class Item(Base):
     """インベントリ内の備品を表します.
 
@@ -92,6 +98,10 @@ class Item(Base):
     owner = relationship("User", back_populates="items")
     logs = relationship("Log", back_populates="item")
 
+    def __str__(self):
+        """sqladminでの表示用に備品名と管理コードを返す."""
+        return f"{self.name} ({self.management_code})"
+
 class Log(Base):
     """備品のアクションログエントリを表します.
 
@@ -114,6 +124,12 @@ class Log(Base):
 
     item = relationship("Item", back_populates="logs")
     user = relationship("User", back_populates="logs")
+
+    def __str__(self):
+        """sqladminでの表示用にアクション、備品名、ユーザー名、日時を返す."""
+        item_name = self.item.name if self.item else "Unknown"
+        user_name = self.user.display_name or self.user.username if self.user else "Unknown"
+        return f"{self.action}: {item_name} by {user_name} ({self.created_at.strftime('%Y-%m-%d %H:%M')})"
 
 class NotificationSettings(Base):
     """システムの通知設定を表します.
