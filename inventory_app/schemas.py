@@ -4,9 +4,11 @@
 データバリデーションとシリアライゼーションに使用される Pydantic モデルを定義します.
 """
 
-from pydantic import BaseModel
-from typing import Optional, List
 from datetime import date, datetime
+from typing import List, Optional
+
+from pydantic import BaseModel
+
 
 class Token(BaseModel):
     """JWTアクセストークンのスキーマ.
@@ -126,6 +128,7 @@ class GrowiItem(BaseModel):
     """Growi 連携表示用アイテムスキーマ.
 
     Attributes:
+        id (int): 備品ID.
         name (str): 備品名.
         management_code (str): 管理コード.
         status (str): ステータス.
@@ -137,6 +140,7 @@ class GrowiItem(BaseModel):
         lending_reason (str, optional): 貸出理由.
         lending_location (str, optional): 貸出場所.
     """
+    id: int
     name: str
     management_code: str
     status: str

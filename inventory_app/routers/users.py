@@ -4,11 +4,13 @@
 ユーザーに関連するエンドポイントを処理します.
 """
 
+from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List
-from .. import database, schemas, crud, models
-from .auth import get_current_admin_user, get_current_active_user
+
+from .. import crud, database, models, schemas
+from .auth import get_current_active_user, get_current_admin_user
 
 router = APIRouter(
     prefix="/api/v1/users",
@@ -29,8 +31,8 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(database.get_db)
     return crud.create_user(db=db, user=user)
 
 @router.get("/", response_model=List[schemas.UserResponse])
-def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db), current_user: models.User = Depends(get_current_admin_user)):
-    """すべてのユーザーを取得します. 管理者ユーザーのみアクセス可能です.
+def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db)):
+    """すべてのユーザーを取得します. (認証不要)
 
     Args:
         skip (int): スキップするユーザー数.

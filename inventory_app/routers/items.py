@@ -4,11 +4,13 @@
 備品に関連するエンドポイントを処理します.
 """
 
+from datetime import date
+from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List
-from datetime import date
-from .. import database, schemas, crud, models
+
+from .. import crud, database, models, schemas
 from .auth import get_current_active_user, get_current_admin_user
 
 router = APIRouter(
@@ -38,6 +40,7 @@ def get_items_status(db: Session = Depends(database.get_db)):
             owner_name = item.owner.display_name
             
         result.append(schemas.GrowiItem(
+            id=item.id,
             name=item.name,
             management_code=item.management_code,
             status=item.status,

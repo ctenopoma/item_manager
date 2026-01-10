@@ -1,5 +1,6 @@
-import requests
 import json
+
+import requests
 
 # APIのベースURL
 BASE_URL = "http://127.0.0.1:8000"
@@ -15,11 +16,14 @@ def get_items_status():
         
         items = response.json()
         print(f"--- 物品ステータス一覧 ({len(items)}件) ---")
+        print(f"{'ID': <5} | {'物品名': <15} | {'ステータス': <10} | {'借用者': <15}")
+        print("-" * 55)
         for item in items:
+            item_id = item['id']
             status = item['status']
             name = item['name']
             owner = item.get('owner_name') or "なし"
-            print(f"物品名: {name: <15} | ステータス: {status: <10} | 借用者: {owner}")
+            print(f"{item_id: <5} | {name: <15} | {status: <10} | {owner: <15}")
             
     except requests.exceptions.RequestException as e:
         print(f"エラーが発生しました: {e}")
